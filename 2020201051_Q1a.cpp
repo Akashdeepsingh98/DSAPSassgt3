@@ -59,12 +59,20 @@ public:
 
     string getMinLexRot()
     {
-        
+        for (int i = 0; i < arr.size(); i++)
+        {
+            int curindex = 2 * origlen - arr[i].size() + 1;
+            if (curindex < origlen)
+            {
+                return arr[i].substr(0, origlen);
+            }
+        }
+        return "";
     }
 };
 
 int main()
 {
-    SuffixArray sa("dcaba");
-    
+    SuffixArray sa("dcabca");
+    cout << sa.getMinLexRot() << endl;
 }
