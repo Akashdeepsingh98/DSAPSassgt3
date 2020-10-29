@@ -100,9 +100,8 @@ void mergeFiles(char *output_file, long long int part_size, long long int num_pa
     FILE *in[num_parts];
     for (long long int i = 0; i < num_parts; i++)
     {
-        char fileName[10];
-        snprintf(fileName, sizeof(fileName), "%lld", i);
-        in[i] = fopen((string(fileName) + ".txt").c_str(), "r");
+        string filename = to_string(i) + ".txt";
+        in[i] = fopen(filename.c_str(), "r");
     }
 
     MinHeapNode *heaparr = new MinHeapNode[num_parts];
@@ -208,16 +207,14 @@ long long int makeParts(char *input_file, long long int part_size)
             }
         }
     }
-    //printf("%lld\n", numele);
     num_parts = num_ele / part_size;
 
     FILE *in = fopen(input_file, "r");
     FILE *out[num_parts];
-    char fileName[10];
     for (long long int i = 0; i < num_parts; i++)
     {
-        snprintf(fileName, sizeof(fileName), "%lld", i);
-        out[i] = fopen((string(fileName) + ".txt").c_str(), "w");
+        string filename = to_string(i)+".txt";
+        out[i] = fopen(filename.c_str(), "w");
     }
 
     long long int *arr = (long long int *)malloc(part_size * sizeof(long long int));
