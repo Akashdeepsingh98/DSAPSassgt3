@@ -50,15 +50,13 @@ void prepare_Trie(vector<unsigned long int> &v, Trienode *root)
     }
 }
 
-void insert_In_Trie(Trienode *root, unsigned long int x)
+void insert_In_Trie(Trienode *r, unsigned long int x)
 {
-    cout << x << endl;
+    Trienode *root = r;
     int num_bits = sizeof(unsigned long int) * 8;
-    cout << num_bits << endl;
-    for (int i = num_bits - 1; i >= 0; i--)
+    for (int i = num_bits - 1; i > 0; i--)
     {
-        unsigned int bitVal = (x & (1 << i));
-        cout << bitVal;
+        unsigned long int bitVal = (x & (1 << i));
         if (bitVal)
         {
             if (root->right == nullptr)
@@ -76,7 +74,6 @@ void insert_In_Trie(Trienode *root, unsigned long int x)
             root = root->left;
         }
     }
-    cout << endl;
 }
 
 unsigned long int findMaxXor(Trienode *root, unsigned long int x, int bitpos)
@@ -101,19 +98,6 @@ unsigned long int findMaxXor(Trienode *root, unsigned long int x, int bitpos)
     unsigned long int number = 0;
     if ((x & (1 << bitpos)))
     {
-        if (root->right)
-        {
-            number = findMaxXor(root->right, x, bitpos - 1);
-            bitval = 1;
-        }
-        else
-        {
-            number = findMaxXor(root->left, x, bitpos - 1);
-            bitval = 0;
-        }
-    }
-    else
-    {
         if (root->left)
         {
             number = findMaxXor(root->left, x, bitpos - 1);
@@ -122,6 +106,19 @@ unsigned long int findMaxXor(Trienode *root, unsigned long int x, int bitpos)
         else
         {
             number = findMaxXor(root->right, x, bitpos - 1);
+            bitval = 0;
+        }
+    }
+    else
+    {
+        if (root->right)
+        {
+            number = findMaxXor(root->right, x, bitpos - 1);
+            bitval = 1;
+        }
+        else
+        {
+            number = findMaxXor(root->left, x, bitpos - 1);
             bitval = 0;
         }
     }
