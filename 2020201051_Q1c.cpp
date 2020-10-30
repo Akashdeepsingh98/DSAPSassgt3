@@ -24,14 +24,38 @@ vector<int> buildSuffixArray(string txt);
 string revString(string &s);
 vector<int> kasai(string txt, vector<int> &suffixvec);
 void printVec(vector<int> &v);
+string getLongPal(string &txt, vector<int> &suffixvec, vector<int> &lcpvec, int origlen);
 
 int main()
 {
     string txt;
     getline(cin, txt);
+    int origlen = txt.size();
     txt += "#" + revString(txt);
     vector<int> suffixvec = buildSuffixArray(txt);
-    printVec(suffixvec);
+    vector<int> lcpvec = kasai(txt, suffixvec);
+    string longestpalin = getLongPal(txt, suffixvec, lcpvec, origlen);
+    cout << longestpalin << endl;
+    return 0;
+}
+
+string getLongPal(string &txt, vector<int> &suffixvec, vector<int> &lcpvec, int origlen)
+{
+    int longestlen = 0;
+    int index = 0;
+    for (int i = 1; i < lcpvec.size(); i++)
+    {
+        if (lcpvec[i] > longestlen)
+        {
+            if ((suffixvec[i - 1] < origlen && suffixvec[i] > origlen) ||
+                (suffixvec[i] < origlen && suffixvec[i - 1] > origlen))
+            {
+                longestlen = lcpvec[i];
+                index = suffixvec[i];
+            }
+        }
+    }
+    return txt.substr(index, longestlen);
 }
 
 void printVec(vector<int> &v)
@@ -46,7 +70,7 @@ void printVec(vector<int> &v)
 vector<int> kasai(string txt, vector<int> &suffixvec)
 {
     int n = suffixvec.size();
-    vector<int> lcp(n, 0);
+    vector<int> lcpvec(n + 1, 0);
     vector<int> invSuff(n, 0);
     for (int i = 0; i < n; i++)
     {
@@ -68,13 +92,15 @@ vector<int> kasai(string txt, vector<int> &suffixvec)
             k++;
         }
 
-        lcp[invSuff[i]] = k;
+        lcpvec[invSuff[i] + 1] = k;
         if (k > 0)
         {
             k--;
         }
     }
-    return lcp;
+    lcpvec[0] = lcpvec.back();
+    lcpvec.pop_back();
+    return lcpvec;
 }
 
 string revString(string &s)
