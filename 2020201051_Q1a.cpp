@@ -75,8 +75,21 @@ vector<int> buildSuffixArray(string txt)
     for (int i = 0; i < n; i++)
     {
         suffixes[i].index = i;
-        suffixes[i].rank[0] = txt[i] - 'a';
-        suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a') : -1;
+        if (txt[i] >= 'A' && txt[i] <= 'Z')
+        {
+            suffixes[i].rank[0] = txt[i] - 'A';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'A') : -1;
+        }
+        else if (txt[i] >= 'a' && txt[i] <= 'z')
+        {
+            suffixes[i].rank[0] = txt[i] - 'a';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a') : -1;
+        }
+        else
+        {
+            suffixes[i].rank[0] = txt[i] - '0';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - '0') : -1;
+        }
     }
     sort(suffixes, 0, n - 1);
 

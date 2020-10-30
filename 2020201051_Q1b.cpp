@@ -21,7 +21,6 @@ public:
 int partition(vector<Suffix> &suffixes, int low, int high);
 void sort(vector<Suffix> &suffixes, int low, int high);
 vector<int> buildSuffixArray(string txt);
-vector<int> kasai(string txt, vector<int> &suffixvec);
 void printVec(vector<int> &v)
 {
     for (int i = 0; i < v.size(); i++)
@@ -33,52 +32,37 @@ void printVec(vector<int> &v)
 
 int main()
 {
+    int K;
     string txt;
     getline(cin, txt);
+    cin >> K;
     int origlen = txt.size();
     vector<int> suffixvec = buildSuffixArray(txt);
-    vector<int> lcpvec = kasai(txt, suffixvec);
-    printVec(suffixvec);
-    printVec(lcpvec);
+
+    string biggestsuffix = "";
+    for (int i = 0; i <= origlen - K; i++)
+    {
+        string firsuf = txt.substr(suffixvec[i]);
+        string secsuf = txt.substr(suffixvec[i + K - 1]);
+        int j, k;
+        for (j = 0, k = 0; j < firsuf.size() && k < secsuf.size() && firsuf[j] == secsuf[k]; j++, k++)
+        {
+        }
+        if (firsuf.substr(0, j).size() > biggestsuffix.size())
+        {
+            biggestsuffix = firsuf.substr(0, j);
+        }
+    }
+    if (biggestsuffix.size() == 0)
+    {
+        cout << -1 << endl;
+    }
+    else
+    {
+        cout << biggestsuffix << endl;
+    }
 
     return 0;
-}
-
-vector<int> kasai(string txt, vector<int> &suffixvec)
-{
-    int n = suffixvec.size();
-    vector<int> lcp(n, 0);
-    vector<int> invSuff(n, 0);
-    for (int i = 0; i < n; i++)
-    {
-        invSuff[suffixvec[i]] = i;
-    }
-    
-    int k = 0;
-    for (int i = 0; i < n; i++)
-    {
-        if (invSuff[i] == n - 1)
-        {
-            k = 0;
-            continue;
-        }
-
-        int j = suffixvec[invSuff[i] + 1];
-
-        while (i + k < n && j + k < n && txt[i + k] == txt[j + k])
-        {
-            k++;
-        }
-
-        lcp[invSuff[i]] = k;
-
-        if (k > 0)
-        {
-            k--;
-        }
-    }
-
-    return lcp;
 }
 
 int partition(vector<Suffix> &suffixes, int low, int high)
@@ -115,8 +99,21 @@ vector<int> buildSuffixArray(string txt)
     for (int i = 0; i < n; i++)
     {
         suffixes[i].index = i;
-        suffixes[i].rank[0] = txt[i] - 'a';
-        suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a') : -1;
+        if (txt[i] >= 'A' && txt[i] <= 'Z')
+        {
+            suffixes[i].rank[0] = txt[i] - 'A';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'A') : -1;
+        }
+        else if (txt[i] >= 'a' && txt[i] <= 'z')
+        {
+            suffixes[i].rank[0] = txt[i] - 'a';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a') : -1;
+        }
+        else
+        {
+            suffixes[i].rank[0] = txt[i] - '0';
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - '0') : -1;
+        }
     }
     sort(suffixes, 0, n - 1);
 
