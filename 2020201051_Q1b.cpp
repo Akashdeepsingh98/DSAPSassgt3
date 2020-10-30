@@ -14,7 +14,7 @@ public:
     }
     bool operator<(Suffix &b)
     {
-        return (this->rank[0] == b.rank[0]) ? (this->rank[1] < b.rank[1] ? 1 : 0) : (this->rank[0] < b.rank[0] ? 1 : 0);
+        return (this->rank[0] == b.rank[0]) ? (this->rank[1] < b.rank[1] ? true : false) : (this->rank[0] < b.rank[0] ? true : false);
     }
 };
 

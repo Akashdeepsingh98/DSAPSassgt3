@@ -21,24 +21,70 @@ public:
 int partition(vector<Suffix> &suffixes, int low, int high);
 void sort(vector<Suffix> &suffixes, int low, int high);
 vector<int> buildSuffixArray(string txt);
+string revString(string &s);
+vector<int> kasai(string txt, vector<int> &suffixvec);
+void printVec(vector<int> &v);
 
 int main()
 {
     string txt;
     getline(cin, txt);
-    int origlen = txt.size();
-    txt += txt;
+    txt += "#" + revString(txt);
     vector<int> suffixvec = buildSuffixArray(txt);
+    printVec(suffixvec);
+}
 
-    for (int i = 0; i < suffixvec.size(); i++)
+void printVec(vector<int> &v)
+{
+    for (int i = 0; i < v.size(); i++)
     {
-        if (suffixvec[i] < origlen)
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+
+vector<int> kasai(string txt, vector<int> &suffixvec)
+{
+    int n = suffixvec.size();
+    vector<int> lcp(n, 0);
+    vector<int> invSuff(n, 0);
+    for (int i = 0; i < n; i++)
+    {
+        invSuff[suffixvec[i]] = i;
+    }
+    int k = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (invSuff[i] == n - 1)
         {
-            cout << txt.substr(suffixvec[i], origlen) << endl;
-            break;
+            k = 0;
+            continue;
+        }
+
+        int j = suffixvec[invSuff[i] + 1];
+        while (i + k < n && j + k < n && txt[i + k] == txt[j + k])
+        {
+            k++;
+        }
+
+        lcp[invSuff[i]] = k;
+        if (k > 0)
+        {
+            k--;
         }
     }
-    return 0;
+    return lcp;
+}
+
+string revString(string &s)
+{
+    string result = "";
+    for (int i = s.size() - 1; i >= 0; i--)
+    {
+        result += s[i];
+    }
+    return result;
 }
 
 int partition(vector<Suffix> &suffixes, int low, int high)
@@ -75,20 +121,25 @@ vector<int> buildSuffixArray(string txt)
     for (int i = 0; i < n; i++)
     {
         suffixes[i].index = i;
-        if (txt[i] >= 'A' && txt[i] <= 'Z')
+        if (txt[i] == '#')
         {
-            suffixes[i].rank[0] = txt[i] - 'A';
-            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'A') : -1;
+            suffixes[i].rank[0] = 0;
+            suffixes[i].rank[1] = 0;
+        }
+        else if (txt[i] >= 'A' && txt[i] <= 'Z')
+        {
+            suffixes[i].rank[0] = txt[i] - 'A' + 1;
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'A' + 1) : -1;
         }
         else if (txt[i] >= 'a' && txt[i] <= 'z')
         {
-            suffixes[i].rank[0] = txt[i] - 'a';
-            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a') : -1;
+            suffixes[i].rank[0] = txt[i] - 'a' + 1;
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - 'a' + 1) : -1;
         }
         else
         {
-            suffixes[i].rank[0] = txt[i] - '0';
-            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - '0') : -1;
+            suffixes[i].rank[0] = txt[i] - '0' + 1;
+            suffixes[i].rank[1] = ((i + 1) < n) ? (txt[i + 1] - '0' + 1) : -1;
         }
     }
     sort(suffixes, 0, n - 1);
