@@ -79,7 +79,7 @@ long long int makeParts(char *input_file, long long int part_size);
 
 int main(int argc, char *argv[])
 {
-    int part_size = 100000;
+    int part_size = 1000000;
     if (argc != 3)
     {
         printf("Give 3 arguments\n");
@@ -208,12 +208,16 @@ long long int makeParts(char *input_file, long long int part_size)
         }
     }
     num_parts = num_ele / part_size;
+    if (part_size * num_parts < num_ele)
+    {
+        num_parts++;
+    }
 
     FILE *in = fopen(input_file, "r");
     FILE *out[num_parts];
     for (long long int i = 0; i < num_parts; i++)
     {
-        string filename = to_string(i)+".txt";
+        string filename = to_string(i) + ".txt";
         out[i] = fopen(filename.c_str(), "w");
     }
 
